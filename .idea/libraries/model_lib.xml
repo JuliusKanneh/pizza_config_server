@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="model-lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../pizza_config_model_lib/model-lib.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
