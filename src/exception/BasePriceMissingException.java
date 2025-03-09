@@ -1,3 +1,5 @@
+// "On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized assistance on this work."
+
 package exception;
 
 import model.PizzaConfig;
@@ -11,7 +13,7 @@ public class BasePriceMissingException extends CustomException
     private final PizzaConfig _pizzaConfig;
 
 
-    public BasePriceMissingException(PizzaConfig pizzaConfig){
+    public BasePriceMissingException(PizzaConfig pizzaConfig) {
         super("Base price is missing.");
         _pizzaConfig = pizzaConfig;
     }

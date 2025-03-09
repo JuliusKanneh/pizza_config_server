@@ -1,3 +1,5 @@
+// "On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized assistance on this work."
+
 package protocol;
 
 import networking.requests.CustomRequest;
@@ -19,7 +21,7 @@ public class GetOptionSetNamesProtocol extends PizzeriaProtocol
         String pizzeriaName = ((GetOptionSetNamesRequest) _request).getPizzeriaName();
         ArrayList<String> optionSetNames = _api.getOptionSetNames(pizzeriaName);
         String message = "Successfully retrieved option set names of " + pizzeriaName + ".";
-        if(optionSetNames == null) {
+        if (optionSetNames == null) {
             message = "Pizzeria " + pizzeriaName + " does not have any option set.";
         }
         return new GetOptionSetNamesResponse(true, message, optionSetNames);

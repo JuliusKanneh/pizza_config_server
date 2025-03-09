@@ -1,3 +1,5 @@
+// "On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized assistance on this work."
+
 package exception;
 
 import model.PizzaConfig;
@@ -6,15 +8,19 @@ import java.util.logging.Level;
 
 public class OptionAlreadyExitException extends CustomException
 {
-    /** The automatically generated unique name for the conflicting option. */
+    /**
+     * The automatically generated unique name for the conflicting option.
+     */
     private final String _optionSetName;
     private final String _optionName;
     private final double _newOptionPrice;
 
-    /** The pizza configuration associated with this exception. */
+    /**
+     * The pizza configuration associated with this exception.
+     */
     private final PizzaConfig _pizzaConfig;
 
-    public OptionAlreadyExitException(PizzaConfig pizzaConfig, String optionSetName, String optionName, double newOptionPrice){
+    public OptionAlreadyExitException(PizzaConfig pizzaConfig, String optionSetName, String optionName, double newOptionPrice) {
         super("Option " + optionName + " already exits!");
         _pizzaConfig = pizzaConfig;
         _optionSetName = optionSetName;

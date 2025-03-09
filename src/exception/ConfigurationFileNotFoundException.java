@@ -1,3 +1,5 @@
+// "On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized assistance on this work."
+
 package exception;
 
 import utils.UtilMethods;
@@ -10,8 +12,8 @@ import utils.UtilMethods;
  * is missing, allowing for proper error handling and potential recovery mechanisms.</p>
  *
  * <p>Academic Integrity Policy Statement:
- *         "On my honor, as a Carnegie-Mellon Africa student, I have neither given
- *          nor received unauthorized assistance on this work."</p>
+ * "On my honor, as a Carnegie-Mellon Africa student, I have neither given
+ * nor received unauthorized assistance on this work."</p>
  *
  * <p><b>Usage Example:</b></p>
  * <pre>

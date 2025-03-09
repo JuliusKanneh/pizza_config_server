@@ -1,3 +1,5 @@
+// "On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized assistance on this work."
+
 package protocol;
 
 import networking.requests.AddOptionToOptionSetRequest;
@@ -12,6 +14,7 @@ import java.util.logging.Level;
 public class AddOptionToOptionSetProtocol extends PizzeriaProtocol
 {
     private final UpdatePizzeria _updatePizzeriaApi;
+
     AddOptionToOptionSetProtocol(UpdatePizzeria api, CustomRequest request) {
         super((PizzeriaConfigAPI) api, request);
         _updatePizzeriaApi = api;

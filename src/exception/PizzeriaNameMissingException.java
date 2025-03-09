@@ -1,9 +1,10 @@
+// "On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized assistance on this work."
+
 package exception;
 
 import model.PizzaConfig;
 
 import java.util.logging.Level;
-
 
 public class PizzeriaNameMissingException extends CustomException
 {

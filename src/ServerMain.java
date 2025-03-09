@@ -1,3 +1,5 @@
+// "On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized assistance on this work."
+
 import server.PizzeriaServer;
 import utils.ConstantValues;
 import utils.UtilMethods;

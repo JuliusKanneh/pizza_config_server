@@ -1,3 +1,5 @@
+// "On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized assistance on this work."
+
 package protocol;
 
 import networking.requests.CustomRequest;
@@ -8,7 +10,8 @@ import wrapper.PizzeriaConfigAPI;
 
 import java.util.ArrayList;
 
-public class GetAllPizzeriaProtocol extends PizzeriaProtocol{
+public class GetAllPizzeriaProtocol extends PizzeriaProtocol
+{
 
     GetAllPizzeriaProtocol(CreatePizzeria api, CustomRequest request) {
         super((PizzeriaConfigAPI) api, request);

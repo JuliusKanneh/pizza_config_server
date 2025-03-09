@@ -1,3 +1,5 @@
+// "On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized assistance on this work."
+
 package exception;
 
 import model.PizzaConfig;
@@ -13,7 +15,7 @@ import java.util.logging.Level;
  * pizzeria name and adding it to the configuration with the specified base price.</p>
  *
  * <p>Academic Integrity Policy Statement: "On my honor, as a Carnegie-Mellon Africa student, I have neither given
- *              nor received unauthorized assistance on this work."</p>
+ * nor received unauthorized assistance on this work."</p>
  *
  * <p><b>Usage Example:</b></p>
  * <pre>
@@ -32,7 +34,7 @@ public class PizzeriaAlreadyExitException extends CustomException
     private PizzaConfig _oldPizzaConfig;
     private final PizzaConfig _newPizzaConfig;
 
-    public PizzeriaAlreadyExitException(PizzaConfig oldPizzaConfig, PizzaConfig newPizzaConfig){
+    public PizzeriaAlreadyExitException(PizzaConfig oldPizzaConfig, PizzaConfig newPizzaConfig) {
         super("Pizzeria " + oldPizzaConfig.getConfigName() + " already exits!");
         _oldPizzaConfig = oldPizzaConfig;
         _newPizzaConfig = newPizzaConfig;
@@ -40,14 +42,14 @@ public class PizzeriaAlreadyExitException extends CustomException
 
     @Override
     public void fix() {
-        if(super.getLoggerStatus()){
+        if (super.getLoggerStatus()) {
             super.logMessage(">> Fix: Updating Pizzeria " + _oldPizzaConfig + " to " + _newPizzaConfig, Level.WARNING);
         }
 
         //Update the pizzeria
         _oldPizzaConfig = _newPizzaConfig;
 
-        if(super.getLoggerStatus()){
+        if (super.getLoggerStatus()) {
             super.logMessage("Successfully Fixed.", Level.INFO);
         }
     }

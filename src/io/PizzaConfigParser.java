@@ -1,7 +1,4 @@
-/*
-On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized
-assistance on this work.
- */
+// "On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized assistance on this work."
 
 package io;
 
@@ -215,17 +212,18 @@ public class PizzaConfigParser
      * @param fileName the name of the configuration file
      * @return a {@code Properties} object containing the configuration data
      */
-    public static Properties getConfigProperties(String fileName){
+    public static Properties getConfigProperties(String fileName) {
         Properties properties = new Properties();
 
-        try{
+        try {
             if (!UtilMethods.fileExists(fileName)) {
                 logger.log(Level.WARNING, ">>Fix: Attempting to fix configuration file not found error:" + fileName);
                 PizzeriaExceptionFactory exceptionFactory = new PizzeriaExceptionFactory();
                 Map<String, Object> data = Map.of("fileName", fileName);
                 throw exceptionFactory.createException(ExceptionType.CONFIGURATION_FILE_NOT_FOUND, data);
             }
-        }catch(CustomException e){
+        }
+        catch (CustomException e) {
             e.fix();
             fileName = ((ConfigurationFileNotFoundException) e).getFileName();
         }

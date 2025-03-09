@@ -1,3 +1,5 @@
+// "On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized assistance on this work."
+
 package exception;
 
 import model.PizzaConfig;
@@ -7,19 +9,27 @@ import java.util.logging.Level;
 
 public class OptionNotFoundException extends CustomException
 {
-    /** The pizza configuration where the option was not found. */
+    /**
+     * The pizza configuration where the option was not found.
+     */
     private final PizzaConfig _pizzaConfig;
 
-    /** The name of the option set where the option was missing. */
+    /**
+     * The name of the option set where the option was missing.
+     */
     private final String _optionSetName;
 
-    /** The name of the missing option. */
+    /**
+     * The name of the missing option.
+     */
     private final String _optionName;
 
-    /** The price assigned to the newly added option if the fix is applied. */
+    /**
+     * The price assigned to the newly added option if the fix is applied.
+     */
     private final double _price;
 
-    public OptionNotFoundException(PizzaConfig pizzaConfig, String optionSetName, String optionName){
+    public OptionNotFoundException(PizzaConfig pizzaConfig, String optionSetName, String optionName) {
         super("Option not found!");
         _pizzaConfig = pizzaConfig;
         _optionSetName = optionSetName;
@@ -27,7 +37,7 @@ public class OptionNotFoundException extends CustomException
         _price = ConstantValues.DEFAULT_OPTION_PRICE;
     }
 
-    public OptionNotFoundException(PizzaConfig pizzaConfig, String optionSetName, String optionName, double price){
+    public OptionNotFoundException(PizzaConfig pizzaConfig, String optionSetName, String optionName, double price) {
         super("Option not found: " + optionName);
         _pizzaConfig = pizzaConfig;
         _optionSetName = optionSetName;

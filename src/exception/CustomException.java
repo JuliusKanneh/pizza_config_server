@@ -1,17 +1,15 @@
+// "On my honor, as a Carnegie-Mellon Africa student, I have neither given nor received unauthorized assistance on this work."
+
 /**
-    File: CustomException.java
-    Author: Julius Aries Kanneh, Jr (jkanneh)
-    Date: January 25, 2025
-    Description:
-        This is a custom exception handler for the Pizza Configuration API.
-
-    Revision History:
-        - None since submission
-
-    Academic Integrity Policy Statement:
-        "On my honor, as a Carnegie-Mellon Africa student, I have neither given
-         nor received unauthorized assistance on this work."
-*/
+ * File: CustomException.java
+ * Author: Julius Aries Kanneh, Jr (jkanneh)
+ * Date: January 25, 2025
+ * Description:
+ * This is a custom exception handler for the Pizza Configuration API.
+ * <p>
+ * Revision History:
+ * - None since submission
+ */
 package exception;
 
 import java.util.logging.Level;
@@ -47,7 +45,7 @@ public abstract class CustomException extends Exception
      * @param errorMessage the error message to be logged
      * @param level the logging level (e.g., {@code Level.SEVERE}, {@code Level.WARNING})
      */
-    public CustomException(String errorMessage, Level level ) {
+    public CustomException(String errorMessage, Level level) {
         _errorMessage = errorMessage;
         logMessage(errorMessage, level);
     }
@@ -59,9 +57,8 @@ public abstract class CustomException extends Exception
      *
      * @param errorMessage the error message to be logged
      */
-    public CustomException(String errorMessage)
-    {
-        if(_loggerStatus){
+    public CustomException(String errorMessage) {
+        if (_loggerStatus) {
             logMessage(errorMessage, Level.SEVERE);
         }
     }
@@ -79,8 +76,7 @@ public abstract class CustomException extends Exception
      *
      * @return the error message
      */
-    public String getErrorMsg()
-    {
+    public String getErrorMsg() {
         return _errorMessage;
     }
 
@@ -113,10 +109,10 @@ public abstract class CustomException extends Exception
      * @param message the message to log
      * @param level the logging level (e.g., {@code Level.SEVERE}, {@code Level.WARNING})
      */
-    public void logMessage(String message, Level level){
+    public void logMessage(String message, Level level) {
         turnOnLogger();
         Logger _logger = Logger.getLogger(getClass().getName());
-        if (_loggerStatus){
+        if (_loggerStatus) {
             _logger.log(level, message);
         }
     }
@@ -127,8 +123,7 @@ public abstract class CustomException extends Exception
      * @return a formatted string describing the exception
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return new StringBuilder(getClass().getName())
                 .append(" [_errorMessage=")
                 .append(_errorMessage)
