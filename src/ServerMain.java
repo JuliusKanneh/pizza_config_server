@@ -13,13 +13,16 @@ import java.util.logging.Logger;
 
 import static utils.ConstantValues.OperationType.DEFAULT_PORT;
 
+//TODO: after starting the server, establish a connection to the datastore as per the type of of the dao provided.
+//if it is a database connection, establish the connection before proceeding to any interaction. Don't allow the user to continue
+//if the connection was not successful.
 public class ServerMain
 {
+    private final static Logger _LOGGER = Logger.getLogger(ServerMain.class.getName());
+
     public static void main(String[] args) {
         int portNumber = ConstantValues.DEFAULT_PORT;
         int acceptTimeout = -1;
-
-        Logger LOGGER = Logger.getLogger(ServerMain.class.getName());
 
         if (args.length == 2) {
             portNumber = Integer.parseInt(args[0]);
@@ -35,7 +38,7 @@ public class ServerMain
             }
         }
         catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "ERROR: " + e.getMessage());
+            _LOGGER.log(Level.SEVERE, "ERROR: " + e.getMessage());
         }
 
         PizzeriaServer server = (acceptTimeout != -1) ? new PizzeriaServer(portNumber, acceptTimeout, dao) : new PizzeriaServer(portNumber, dao);
@@ -43,7 +46,7 @@ public class ServerMain
             server.runServer();
         }
         catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "ERROR: " + e.getMessage());
+            _LOGGER.log(Level.SEVERE, "ERROR: " + e.getMessage());
         }
     }
 
@@ -54,8 +57,53 @@ public class ServerMain
         Integer choice = UtilMethods.readFromKeyboard("Please enter your option: ", Integer.class);
         return switch (choice) {
             case 1 -> new LocalDataStoreDAO();
-            case 2 -> new MySQLPizzaConfigDAO();
+            case 2 -> createMySqlDataStore();
             default -> null;
         };
+    }
+
+    private static PizzaConfigDAO createMySqlDataStore() {
+        String dbName = null;
+        String dbUrl = null;
+        String dbUser = null;
+        String dbPassword = null;
+
+        while (dbName == null) {
+            try {
+                dbName = UtilMethods.readFromKeyboard("Enter database name: ", String.class);
+            }
+            catch (IOException e) {
+                _LOGGER.log(Level.SEVERE, "Error reading database name: " + e.getMessage() + "\nPlease try again.");
+            }
+        }
+
+        while (dbUrl == null) {
+            try {
+                dbUrl = UtilMethods.readFromKeyboard("Enter database url: ", String.class);
+            }
+            catch (IOException e) {
+                _LOGGER.log(Level.SEVERE, "Error reading database url: " + e.getMessage() + "\nPlease try again.");
+            }
+        }
+
+        while (dbUser == null) {
+            try {
+                dbUser = UtilMethods.readFromKeyboard("Enter database username: ", String.class);
+            }
+            catch (IOException e) {
+                _LOGGER.log(Level.SEVERE, "Error reading database username: " + e.getMessage() + "\nPlease try again.");
+            }
+        }
+
+        while (dbPassword == null) {
+            try {
+                dbPassword = UtilMethods.readFromKeyboard("Enter database password (leave blank if your database does not have a password): ", String.class);
+            }
+            catch (IOException e) {
+                _LOGGER.log(Level.SEVERE, "Error reading database password: " + e.getMessage() + "\nPlease try again.");
+            }
+        }
+
+        return new MySQLPizzaConfigDAO(dbName, dbUrl, dbUser, dbPassword);
     }
 }

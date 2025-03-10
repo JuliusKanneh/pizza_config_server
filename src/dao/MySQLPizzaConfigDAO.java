@@ -18,9 +18,17 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
 {
     Logger _logger = Logger.getLogger(MySQLPizzaConfigDAO.class.getName());
     private static DBConnection CONNECTION = null;
+    private String _dbName;
+    private String _url;
+    private String _user;
+    private String _password;
 
-    public MySQLPizzaConfigDAO() {
-        CONNECTION = new MySqlConnection("jdbc:mysql://localhost:3306/pizza_config", "root", "");
+    public MySQLPizzaConfigDAO(String dbName, String url, String username, String password) {
+        _dbName = dbName;
+        _url = url;
+        _user = username;
+        _password = password;
+        CONNECTION = new MySqlConnection(_url, _dbName, _user, _password);
     }
 
     @Override
@@ -55,7 +63,7 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
     }
 
     @Override
-    public PizzaConfig getPizzeria(String pizzeriaName) {
+    public PizzaConfig getPizzaConfig(String pizzeriaName) {
         String sql = "SELECT * FROM pizzerias WHERE name = ?";
         try (Connection conn = CONNECTION.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -74,11 +82,6 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
             _logger.log(Level.SEVERE, "Failed to retrieve pizzeria: " + pizzeriaName, e);
             return null;
         }
-    }
-
-    @Override
-    public PizzaConfig getPizzaConfig(String pizzeriaName) {
-        return null;
     }
 
     @Override

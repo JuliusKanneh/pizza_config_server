@@ -16,8 +16,6 @@ public interface PizzaConfigDAO
 
     void printPizzeria(String pizzeriaName);
 
-    PizzaConfig getPizzeria(String pizzeriaName);
-
     PizzaConfig getPizzaConfig(String pizzeriaName);
 
     ArrayList<String> getAllPizzeriaNames();
@@ -41,6 +39,7 @@ public interface PizzaConfigDAO
     boolean deleteOptionSet(String pizzeriaName, String optionSetName);
 
     boolean addOption(String pizzeriaName, String optionSetName, String optionName);
+
     boolean addOption(String pizzeriaName, String optionSetName, String optionName, double price);
 
 }

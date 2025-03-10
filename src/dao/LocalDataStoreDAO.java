@@ -62,14 +62,19 @@ public class LocalDataStoreDAO implements PizzaConfigDAO
         }
     }
 
-    @Override
-    public PizzaConfig getPizzeria(String pizzeriaName) {
-        return null;
-    }
+//    @Override
+//    public PizzaConfig getPizzeria(String pizzeriaName) {
+//        return null;
+//    }
 
     @Override
     public PizzaConfig getPizzaConfig(String pizzeriaName) {
-        return null;
+        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
+        if (pizzaConfig == null) {
+            _logger.log(Level.WARNING, "Pizzeria '" + pizzeriaName + "' does not exist!");
+            return null;
+        }
+        return configs.get(pizzeriaName);
     }
 
     @Override

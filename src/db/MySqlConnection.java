@@ -11,12 +11,14 @@ public class MySqlConnection extends DBConnection
     private String _url;
     private String _user;
     private String _password;
+    private String _dbName;
 
-    public MySqlConnection(String url, String user, String password) {
-        super(url, user, password);
+    public MySqlConnection(String url, String dbName, String user, String password) {
+        super(url, dbName, user, password);
         _url = url;
         _user = user;
         _password = password;
+        _dbName = dbName;
     }
 
     @Override
@@ -26,6 +28,7 @@ public class MySqlConnection extends DBConnection
 
     @Override
     public Connection getConnection() throws SQLException {
+        _url += _dbName;
         return DriverManager.getConnection(_url, _user, _password);
     }
 
