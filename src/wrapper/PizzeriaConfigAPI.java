@@ -2,6 +2,11 @@
 
 package wrapper;
 
+import dao.PizzaConfigDAO;
+
 public class PizzeriaConfigAPI extends ProxyPizzerias implements CreatePizzeria, UpdatePizzeria, DeletePizzeria
 {
+    public PizzeriaConfigAPI(PizzaConfigDAO pizzaConfigDAO) {
+        super(pizzaConfigDAO);
+    }
 }

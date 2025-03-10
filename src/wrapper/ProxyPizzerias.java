@@ -12,6 +12,8 @@
 
 package wrapper;
 
+import dao.MySQLPizzaConfigDAO;
+import dao.PizzaConfigDAO;
 import exception.*;
 import io.PizzaConfigParser;
 import model.PizzaConfig;
@@ -27,235 +29,93 @@ import java.util.logging.Logger;
 public abstract class ProxyPizzerias
 {
     private Logger _logger;
-
-    private static LinkedHashMap<String, PizzaConfig> configs = new LinkedHashMap<>();
-
+//    private static final LinkedHashMap<String, PizzaConfig> configs = new LinkedHashMap<>();
+    PizzaConfigDAO _pizzaConfigDAO;
     ExceptionFactory factory = new PizzeriaExceptionFactory();
     CustomException exception;
 
-    ProxyPizzerias(){
-        _logger = Logger.getLogger(this.getClass().getName());
+    public ProxyPizzerias(PizzaConfigDAO pizzaConfigDAO){
+        _pizzaConfigDAO = pizzaConfigDAO;
     }
 
     public boolean createPizzeria(Properties configProperties) {
         PizzaConfig pizzaConfig = PizzaConfigParser.buildPizzaConfig(configProperties);
-
-        if (pizzaConfig == null){
-            return false;
-        }
-
-        if(configs.containsKey(pizzaConfig.getConfigName())){
-            configs.replace(pizzaConfig.getConfigName(), pizzaConfig);
-        }else{
-            configs.put(pizzaConfig.getConfigName(), pizzaConfig);
-        }
-        return true;
+        return _pizzaConfigDAO.createPizzeria(pizzaConfig);
     }
 
     public void addPizzeria(PizzaConfig pizzaConfig) {
-        PizzaConfig foundPizzaConfig = configs.get(pizzaConfig.getConfigName());
-        if (foundPizzaConfig != null) {
-            Map<String, Object> params = Map.of("foundPizzaConfig", foundPizzaConfig,
-                    "newPizzaConfig", pizzaConfig);
-            exception = factory.createException(ExceptionType.BASE_PRICE_MISSING, params);
-            exception.fix();
-        }
-
-        configs.put(pizzaConfig.getConfigName(), pizzaConfig);
+        //TODO: investigate the use of this method, it seems useless.
+//        _pizzaConfigDAO.addPizzeria(pizzaConfig);
+//        PizzaConfig foundPizzaConfig = configs.get(pizzaConfig.getConfigName());
+//        if (foundPizzaConfig != null) {
+//            Map<String, Object> params = Map.of("foundPizzaConfig", foundPizzaConfig,
+//                    "newPizzaConfig", pizzaConfig);
+//            exception = factory.createException(ExceptionType.BASE_PRICE_MISSING, params);
+//            exception.fix();
+//        }
+//
+//        configs.put(pizzaConfig.getConfigName(), pizzaConfig);
     }
 
     public synchronized void addOptionSet(String pizzeriaName, String optionSetName) {
-        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
-        if (pizzaConfig == null) {
-            pizzaConfig = new PizzaConfig();
-            Map<String, Object> params = Map.of("pizzaConfig", pizzaConfig,
-                    "pizzeriaName", pizzeriaName);
-            exception = factory.createException(ExceptionType.BASE_PRICE_MISSING, params);
-            exception.fix();
-        }
-        pizzaConfig.addOptionSet(optionSetName);
+        _pizzaConfigDAO.addOptionSet(pizzeriaName, optionSetName);
     }
 
     public void configurePizzeria(String filename) {
-        boolean success = PizzaConfigParser.buildPizzaConfig(filename, (PizzeriaConfigAPI) this);
-        if(!success){
-            _logger.log(Level.SEVERE, "Building Pizzeria failed! Self-healing method couldn't fix the problem.");
-        }
+        _pizzaConfigDAO.configurePizzeriasFromTxtFile(filename);
     }
 
     public synchronized void printPizzeria(String pizzeriaName) {
-        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
-
-        if (pizzaConfig == null) {
-            _logger.log(Level.SEVERE, "Pizzeria '" + pizzeriaName + "' not found!");
-        } else {
-            pizzaConfig.print();
-        }
+        _pizzaConfigDAO.printPizzeria(pizzeriaName);
     }
 
     public synchronized void printAllPizzeria() {
-        if(configs.isEmpty())
-            _logger.log(Level.INFO, "No Pizzeria exits.");
-
-        for (PizzaConfig pizzaConfig : configs.values()) {
-            pizzaConfig.print();
-        }
+        _pizzaConfigDAO.printAllPizzerias();
     }
 
     public synchronized ArrayList<String> getAllPizzeriaNames(){
-        ArrayList<String> pizzeriaNames = new ArrayList<>();
-        for (Map.Entry<String, PizzaConfig> entry : configs.entrySet()) {
-            pizzeriaNames.add(entry.getKey());
-        }
-        return pizzeriaNames;
+        return _pizzaConfigDAO.getAllPizzeriaNames();
     }
 
     public synchronized ArrayList<String> getOptionSetNames(String pizzeriaName){
-        ArrayList<String> optionSetNames = new ArrayList<>();
-        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
-        if (pizzaConfig == null) {
-            return optionSetNames;
-        }
-
-        return pizzaConfig.getOptionSetNames();
+        return _pizzaConfigDAO.getOptionSetNames(pizzeriaName);
     }
 
     public synchronized PizzaConfig getPizzaConfig(String pizzeriaName) {
-        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
-        if (pizzaConfig == null) {
-            _logger.log(Level.WARNING, "Pizzeria '" + pizzeriaName + "' does not exist!");
-            return null;
-        }
-        return configs.get(pizzeriaName);
+        return _pizzaConfigDAO.getPizzaConfig(pizzeriaName);
     }
 
     public synchronized boolean updateOptionSetName(String pizzeriaName, String optionSetName, String newName) {
-        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
-        if (pizzaConfig == null) {
-            _logger.log(Level.WARNING, "Pizzeria '" + pizzeriaName + "' does not exist!");
-            return false;
-            //TODO: a better approach could be to prompt the user to decide whether you should create a new pizza config and create a new option set or not.
-        }
-
-        boolean success = pizzaConfig.updateOptionSetName(optionSetName, newName);
-        try {
-            if (!success) {
-                throw new OptionSetNotFoundException(pizzaConfig, optionSetName);
-            }
-        }catch (CustomException e){
-            e.fix();
-        }
-        return true;
+        return _pizzaConfigDAO.updateOptionSetName(pizzeriaName, optionSetName, newName);
     }
 
     public synchronized boolean updateBasePrice(String pizzeriaName, double newPrice) {
-        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
-
-        if (pizzaConfig == null) {
-            pizzaConfig = new PizzaConfig();
-            Map<String, Object> params = Map.of("pizzaConfig", pizzaConfig, "pizzeriaName", pizzeriaName);
-            exception = factory.createException(ExceptionType.BASE_PRICE_MISSING, params);
-            exception.fix();
-        }
-
-
-        pizzaConfig.updateBasePrice(newPrice);
-        return true;
+        return _pizzaConfigDAO.updateBasePrice(pizzeriaName, newPrice);
     }
 
 
     public synchronized boolean updateOptionPrice(String pizzeriaName, String optionSetName, String optionName, double newPrice) {
-        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
-        if (pizzaConfig == null) {
-            _logger.log(Level.WARNING, "Pizzeria '" + pizzeriaName + "' does not exist!");
-            return false;
-            //TODO: a better approach could be to prompt the user to decide whether you should create a new pizza config and create a new option set or not.
-        }
-
-        UpdateOptionPriceRes res = pizzaConfig.updateOptionPrice(optionSetName, optionName, newPrice);
-        while (res != UpdateOptionPriceRes.SUCCESS) {
-            if (res == UpdateOptionPriceRes.OPTION_SET_NOT_FOUND) {
-                Map<String, Object> params = Map.of("pizzaConfig", pizzaConfig, "optionSetName", optionSetName);
-                exception = factory.createException(ExceptionType.OPTION_SET_NOT_FOUND, params);
-                exception.fix();
-            } else if (res == UpdateOptionPriceRes.OPTION_NOT_FOUND) {
-                Map<String, Object> params = Map.of("pizzaConfig", pizzaConfig, "optionName", optionName);
-                exception = factory.createException(ExceptionType.OPTION_SET_NOT_FOUND, params);
-                exception.fix();
-            }
-
-            res = pizzaConfig.updateOptionPrice(optionSetName, optionName, newPrice);
-        }
-        return true;
+       return _pizzaConfigDAO.updateOptionPrice(pizzeriaName, optionSetName, optionName, newPrice);
     }
 
     public synchronized boolean deletePizzeria(String pizzeriaName) {
-        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
-        if (pizzaConfig == null) {
-            _logger.log(Level.SEVERE, "You are trying to delete a pizzeria that does not exist.");
-            return false;
-        }
-        configs.remove(pizzeriaName);
-        return true;
+        return _pizzaConfigDAO.deletePizzeria(pizzeriaName);
     }
 
     public synchronized boolean deleteOption(String pizzeriaName, String optionSetName, String optionName){
-        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
-        if (pizzaConfig == null) {
-            _logger.log(Level.WARNING, "You are trying to delete a an option within an option set that does not exist.");
-            return false;
-        }
-
-        boolean success = pizzaConfig.deleteOption(optionSetName, optionName);
-        if (!success) {
-            _logger.log(Level.WARNING, " Deleting option '" + optionName + "' failed!");
-        }
-        return true;
+        return _pizzaConfigDAO.deleteOption(pizzeriaName, optionSetName, optionName);
     }
 
     public synchronized boolean deleteOptionSet(String pizzeriaName, String optionSetName) {
-        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
-        if (pizzaConfig == null) {
-            _logger.log(Level.WARNING, "You are trying to delete a an option set of a pizza configuration that doesn't not exist.");
-            return false;
-        }
-
-        boolean success = pizzaConfig.deleteOptionSet(optionSetName);
-        if (!success) {
-            _logger.log(Level.WARNING, " Deleting option set '" + optionSetName + "' failed! Option set does not exist.");
-        }
-
-        return true;
+        return _pizzaConfigDAO.deleteOptionSet(pizzeriaName, optionSetName);
     }
 
     public boolean addOption(String pizzeriaName, String optionSetName, String optionName){
-        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
-        if (pizzaConfig == null) {
-            _logger.log(Level.WARNING, "You are trying to update a pizzeria that does not exist.");
-            return false;
-        }
-
-        boolean success = pizzaConfig.addOption(optionSetName, optionName);
-        if (!success) {
-            _logger.log(Level.WARNING, " Adding option '" + optionName + "' failed!");
-        }
-        return true;
+        return _pizzaConfigDAO.addOption(pizzeriaName, optionSetName, optionName);
     }
 
     public boolean addOption(String pizzeriaName, String optionSetName, String optionName, double price){
-        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
-        if (pizzaConfig == null) {
-            _logger.log(Level.WARNING, "You are trying to update a pizzeria that does not exist.");
-            return false;
-        }
-
-        boolean success = pizzaConfig.addOption(optionSetName, optionName, price);
-        if (!success) {
-            _logger.log(Level.WARNING, " Adding option '" + optionName + "' failed!");
-        }
-
-        return true;
+        return _pizzaConfigDAO.addOption(pizzeriaName, optionSetName, optionName, price);
     }
-
 
 }

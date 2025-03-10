@@ -2,6 +2,7 @@
 
 package server;
 
+import dao.PizzaConfigDAO;
 import networking.requests.CustomRequest;
 import protocol.PizzeriaProtocol;
 import protocol.PizzeriaProtocolFactory;
@@ -29,17 +30,18 @@ public class PizzeriaServer implements PizzeriaInterface
 
     public static boolean KEEP_RUNNING = true;
 
-    public PizzeriaServer(int portNumber) {
+    public PizzeriaServer(int portNumber, PizzaConfigDAO dao) {
         _logger = Logger.getLogger(this.getClass().getName());
         _portNumber = portNumber;
         _acceptTimeout = -1; //-1 means there is no timeout.
         _serverSocket = null;
         _clientSocket = null;
         _clientHandler = null;
-        _api = new PizzeriaConfigAPI();
+        _api = new PizzeriaConfigAPI(dao);
     }
 
-    public PizzeriaServer(int portNumber, int acceptTimeout) {
+    public PizzeriaServer(int portNumber, int acceptTimeout, PizzaConfigDAO dao) {
+        _api = new PizzeriaConfigAPI(dao);
         _logger = Logger.getLogger(this.getClass().getName());
         _portNumber = portNumber;
         _acceptTimeout = acceptTimeout; //-1 means there is no timeout.
@@ -50,11 +52,12 @@ public class PizzeriaServer implements PizzeriaInterface
 
     @Override
     public Socket acceptConnection(ServerSocket serverSocket) {
-        try{
+        try {
             Socket clientSocket = serverSocket.accept();
             _logger.log(Level.INFO, "Server connected to " + clientSocket);
             return clientSocket;
-        }catch (IOException e){
+        }
+        catch (IOException e) {
             _logger.log(Level.SEVERE, "Server caught exception when trying to listen on port " + serverSocket.getLocalPort() + "\n" + e);
         }
         return null;
@@ -64,15 +67,17 @@ public class PizzeriaServer implements PizzeriaInterface
     public ServerSocket openSocket(int portNumber, int acceptTimeout) {
         ServerSocket serverSocket = null;
 
-        try{
+        try {
             serverSocket = new ServerSocket(_portNumber);
-            if (acceptTimeout > 0){
+            if (acceptTimeout > 0) {
                 serverSocket.setSoTimeout(acceptTimeout);
             }
-        }catch (BindException e){
+        }
+        catch (BindException e) {
             _logger.log(Level.SEVERE, "Server cannot bind to port " + _logger + "\n" + e);
             System.exit(3);
-        }catch (Exception e){
+        }
+        catch (Exception e) {
             _logger.log(Level.SEVERE, "Server caught exception when trying to create socket ");
             System.err.println("Server caught exception when trying to create socket ");
         }
