@@ -6,6 +6,7 @@ import utils.ConstantValues;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -246,5 +247,17 @@ public class LocalDataStoreDAO implements PizzaConfigDAO
         }
 
         return true;
+    }
+
+    @Override
+    public ArrayList<String> getOptions(String pizzeriaName, String optionSetName) {
+        PizzaConfig pizzaConfig = configs.get(pizzeriaName);
+        if (pizzaConfig == null) {
+            _logger.log(Level.WARNING, "Pizzeria '" + pizzeriaName + "' does not exist!");
+            return null;
+        }
+        ArrayList<String> optionNames = pizzaConfig.getOptionNames(optionSetName);
+        System.out.println("Option Names For Test: " + optionNames);
+        return optionNames;
     }
 }

@@ -5,6 +5,7 @@ package dao;
 import model.PizzaConfig;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface PizzaConfigDAO
 {
@@ -42,4 +43,5 @@ public interface PizzaConfigDAO
 
     boolean addOption(String pizzeriaName, String optionSetName, String optionName, double price);
 
+    ArrayList<String> getOptions(String pizzeriaName, String optionSetName);
 }

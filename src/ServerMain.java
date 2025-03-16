@@ -63,46 +63,47 @@ public class ServerMain
     }
 
     private static PizzaConfigDAO createMySqlDataStore() {
-        String dbName = null;
-        String dbUrl = null;
-        String dbUser = null;
-        String dbPassword = null;
+        String dbName = "pizzaconfigdb";
+        String dbUrl = "jdbc:mysql://localhost:3306/";
+        String dbUser = "root";
+        String dbPassword = "";
 
-        while (dbName == null) {
-            try {
-                dbName = UtilMethods.readFromKeyboard("Enter database name: ", String.class);
-            }
-            catch (IOException e) {
-                _LOGGER.log(Level.SEVERE, "Error reading database name: " + e.getMessage() + "\nPlease try again.");
-            }
-        }
-
-        while (dbUrl == null) {
-            try {
-                dbUrl = UtilMethods.readFromKeyboard("Enter database url: ", String.class);
-            }
-            catch (IOException e) {
-                _LOGGER.log(Level.SEVERE, "Error reading database url: " + e.getMessage() + "\nPlease try again.");
-            }
-        }
-
-        while (dbUser == null) {
-            try {
-                dbUser = UtilMethods.readFromKeyboard("Enter database username: ", String.class);
-            }
-            catch (IOException e) {
-                _LOGGER.log(Level.SEVERE, "Error reading database username: " + e.getMessage() + "\nPlease try again.");
-            }
-        }
-
-        while (dbPassword == null) {
-            try {
-                dbPassword = UtilMethods.readFromKeyboard("Enter database password (leave blank if your database does not have a password): ", String.class);
-            }
-            catch (IOException e) {
-                _LOGGER.log(Level.SEVERE, "Error reading database password: " + e.getMessage() + "\nPlease try again.");
-            }
-        }
+        //TODO: uncomment after testing
+//        while (dbName == null) {
+//            try {
+//                dbName = UtilMethods.readFromKeyboard("Enter database name: ", String.class);
+//            }
+//            catch (IOException e) {
+//                _LOGGER.log(Level.SEVERE, "Error reading database name: " + e.getMessage() + "\nPlease try again.");
+//            }
+//        }
+//
+//        while (dbUrl == null) {
+//            try {
+//                dbUrl = UtilMethods.readFromKeyboard("Enter database url: ", String.class);
+//            }
+//            catch (IOException e) {
+//                _LOGGER.log(Level.SEVERE, "Error reading database url: " + e.getMessage() + "\nPlease try again.");
+//            }
+//        }
+//
+//        while (dbUser == null) {
+//            try {
+//                dbUser = UtilMethods.readFromKeyboard("Enter database username: ", String.class);
+//            }
+//            catch (IOException e) {
+//                _LOGGER.log(Level.SEVERE, "Error reading database username: " + e.getMessage() + "\nPlease try again.");
+//            }
+//        }
+//
+//        while (dbPassword == null) {
+//            try {
+//                dbPassword = UtilMethods.readFromKeyboard("Enter database password (leave blank if your database does not have a password): ", String.class);
+//            }
+//            catch (IOException e) {
+//                _LOGGER.log(Level.SEVERE, "Error reading database password: " + e.getMessage() + "\nPlease try again.");
+//            }
+//        }
 
         return new MySQLPizzaConfigDAO(dbName, dbUrl, dbUser, dbPassword);
     }

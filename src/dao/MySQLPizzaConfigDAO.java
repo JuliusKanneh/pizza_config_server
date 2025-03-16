@@ -33,7 +33,7 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
 
     @Override
     public boolean createPizzeria(PizzaConfig config) {
-        String sql = "INSERT INTO pizzerias (name, base_price) VALUES (?, ?)";
+        String sql = "INSERT INTO pizzerias (config_name, base_price) VALUES (?, ?)";
         try (Connection conn = CONNECTION.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, config.getConfigName());
@@ -64,14 +64,14 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
 
     @Override
     public PizzaConfig getPizzaConfig(String pizzeriaName) {
-        String sql = "SELECT * FROM pizzerias WHERE name = ?";
+        String sql = "SELECT * FROM pizzaconfig WHERE config_name = ?";
         try (Connection conn = CONNECTION.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, pizzeriaName);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 PizzaConfig config = new PizzaConfig();
-                config.setConfigName(rs.getString("name"));
+                config.setConfigName(rs.getString("config_name"));
                 config.updateBasePrice(rs.getDouble("base_price"));
                 // TODO: Load option sets and options from related tables
                 return config;
@@ -87,12 +87,12 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
     @Override
     public ArrayList<String> getAllPizzeriaNames() {
         ArrayList<String> names = new ArrayList<>();
-        String sql = "SELECT name FROM pizzerias";
+        String sql = "SELECT config_name FROM pizzaconfig";
         try (Connection conn = CONNECTION.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                names.add(rs.getString("name"));
+                names.add(rs.getString("config_name"));
             }
         }
         catch (SQLException e) {
@@ -108,7 +108,7 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
 
     @Override
     public boolean updatePizzeria(PizzaConfig config) {
-        String sql = "UPDATE pizzerias SET base_price = ? WHERE name = ?";
+        String sql = "UPDATE pizzerias SET base_price = ? WHERE config_name = ?";
         try (Connection conn = CONNECTION.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setDouble(1, config.getBasePrice());
@@ -124,7 +124,7 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
 
     @Override
     public boolean deletePizzeria(String pizzeriaName) {
-        String sql = "DELETE FROM pizzerias WHERE name = ?";
+        String sql = "DELETE FROM pizzerias WHERE config_name = ?";
         try (Connection conn = CONNECTION.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, pizzeriaName);
@@ -175,5 +175,10 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
     @Override
     public boolean addOption(String pizzeriaName, String optionSetName, String optionName, double price) {
         return false;
+    }
+
+    @Override
+    public ArrayList<String> getOptions(String pizzeriaName, String optionSetName) {
+        return null;
     }
 }

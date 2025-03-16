@@ -5,6 +5,7 @@ package wrapper;
 import model.PizzaConfig;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public interface CreatePizzeria
@@ -52,4 +53,5 @@ public interface CreatePizzeria
 
     public void printAllPizzeria();
 
+    public List<String> getOptionNames(String pizzeriaName, String optionSetName);
 }

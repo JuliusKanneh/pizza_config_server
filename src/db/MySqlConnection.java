@@ -28,8 +28,8 @@ public class MySqlConnection extends DBConnection
 
     @Override
     public Connection getConnection() throws SQLException {
-        _url += _dbName;
-        return DriverManager.getConnection(_url, _user, _password);
+        String finalUrl = _url+_dbName;
+        return DriverManager.getConnection(finalUrl, _user, _password);
     }
 
     @Override

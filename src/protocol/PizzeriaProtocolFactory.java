@@ -25,6 +25,7 @@ public class PizzeriaProtocolFactory implements ProtocolFactory
             case CONFIG_PIZZERIA_PROTOCOL -> new ConfigPizzeriaProtocol(_api, _request);
             case GET_ALL_PIZZERIA_PROTOCOL -> new GetAllPizzeriaProtocol(_api, _request);
             case GET_ALL_OPTION_SET_NAMES_PROTOCOL -> new GetOptionSetNamesProtocol(_api, _request);
+            case GET_ALL_OPTION_NAMES_PROTOCOL -> new GetOptionNamesProtocol(_api, _request);
             case GET_PIZZERIA_PROTOCOL -> new GetPizzeriaProtocol(_api, _request);
             case DELETE_PIZZERIA_PROTOCOL -> new DeletePizzeriaProtocol(_api, _request);
             case UPDATE_BASE_PRICE_PROTOCOL -> new UpdateBasePriceProtocol(_api, _request);
@@ -42,6 +43,7 @@ public class PizzeriaProtocolFactory implements ProtocolFactory
             case UpdateBasePriceRequest _ -> UPDATE_BASE_PRICE_PROTOCOL;
             case AddOptionToOptionSetRequest _ -> ADD_OPTION_TO_OPTION_SET_PROTOCOL;
             case GetOptionSetNamesRequest _ -> GET_ALL_OPTION_SET_NAMES_PROTOCOL;
+            case GetOptionNamesRequest _ -> GET_ALL_OPTION_NAMES_PROTOCOL;
             case null, default -> null;
         };
     }

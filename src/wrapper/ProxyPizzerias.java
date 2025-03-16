@@ -19,10 +19,7 @@ import io.PizzaConfigParser;
 import model.PizzaConfig;
 import utils.ConstantValues.UpdateOptionPriceRes;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,20 +38,6 @@ public abstract class ProxyPizzerias
     public boolean createPizzeria(Properties configProperties) {
         PizzaConfig pizzaConfig = PizzaConfigParser.buildPizzaConfig(configProperties);
         return _pizzaConfigDAO.createPizzeria(pizzaConfig);
-    }
-
-    public void addPizzeria(PizzaConfig pizzaConfig) {
-        //TODO: investigate the use of this method, it seems useless.
-//        _pizzaConfigDAO.addPizzeria(pizzaConfig);
-//        PizzaConfig foundPizzaConfig = configs.get(pizzaConfig.getConfigName());
-//        if (foundPizzaConfig != null) {
-//            Map<String, Object> params = Map.of("foundPizzaConfig", foundPizzaConfig,
-//                    "newPizzaConfig", pizzaConfig);
-//            exception = factory.createException(ExceptionType.BASE_PRICE_MISSING, params);
-//            exception.fix();
-//        }
-//
-//        configs.put(pizzaConfig.getConfigName(), pizzaConfig);
     }
 
     public synchronized void addOptionSet(String pizzeriaName, String optionSetName) {
@@ -110,6 +93,10 @@ public abstract class ProxyPizzerias
         return _pizzaConfigDAO.deleteOptionSet(pizzeriaName, optionSetName);
     }
 
+    public void addPizzeria(PizzaConfig pizzaConfig) {
+
+    }
+
     public boolean addOption(String pizzeriaName, String optionSetName, String optionName){
         return _pizzaConfigDAO.addOption(pizzeriaName, optionSetName, optionName);
     }
@@ -118,4 +105,7 @@ public abstract class ProxyPizzerias
         return _pizzaConfigDAO.addOption(pizzeriaName, optionSetName, optionName, price);
     }
 
+    public ArrayList<String> getOptionNames(String pizzeriaName, String optionSetName){
+        return _pizzaConfigDAO.getOptions(pizzeriaName, optionSetName);
+    }
 }

@@ -9,4 +9,5 @@ public class PizzeriaConfigAPI extends ProxyPizzerias implements CreatePizzeria,
     public PizzeriaConfigAPI(PizzaConfigDAO pizzaConfigDAO) {
         super(pizzaConfigDAO);
     }
+
 }
