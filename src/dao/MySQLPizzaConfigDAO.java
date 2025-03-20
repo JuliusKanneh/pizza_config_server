@@ -4,19 +4,23 @@ package dao;
 
 import db.DBConnection;
 import db.MySqlConnection;
+import exception.CustomException;
+import exception.ExceptionFactory;
+import exception.ExceptionType;
+import exception.PizzeriaExceptionFactory;
 import model.PizzaConfig;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MySQLPizzaConfigDAO implements PizzaConfigDAO
 {
     Logger _logger = Logger.getLogger(MySQLPizzaConfigDAO.class.getName());
+    ExceptionFactory factory = new PizzeriaExceptionFactory();
+    CustomException exception;
     private static DBConnection CONNECTION = null;
     private String _dbName;
     private String _url;
@@ -33,7 +37,7 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
 
     @Override
     public boolean createPizzeria(PizzaConfig config) {
-        String sql = "INSERT INTO pizzerias (config_name, base_price) VALUES (?, ?)";
+        String sql = "INSERT INTO pizzaconfig (config_name, base_price) VALUES (?, ?)";
         try (Connection conn = CONNECTION.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, config.getConfigName());
@@ -54,7 +58,82 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
 
     @Override
     public void addOptionSet(String pizzeriaName, String optionSetName) {
-        //TODO: implement this method as it is implmeneted in the LocalDataStoreDAO.java class
+        PreparedStatement optionSetStmt = null;
+        PreparedStatement insertStmt = null;
+        ResultSet rs = null;
+
+        String sql = "SELECT id, base_price FROM pizzaconfig WHERE name = ?";
+
+        try (Connection conn = CONNECTION.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, pizzeriaName);
+            rs = pstmt.executeQuery();
+
+            int pizzeriaId;
+
+            if (rs.next()) {
+                // Pizzeria exists, get its ID
+                pizzeriaId = rs.getInt("pizza_config_id");
+
+                // Check if base_price is set
+                double basePrice = rs.getDouble("base_price");
+                if (basePrice <= 0) {
+                    // Base price missing, handle exception
+                    Map<String, Object> params = Map.of("pizzeriaName", pizzeriaName);
+                    exception = factory.createException(ExceptionType.BASE_PRICE_MISSING, params);
+                    exception.fix();
+                }
+            } else {
+                // Pizzeria doesn't exist, create it
+                String insertPizzeriaSql = "INSERT INTO pizzaconfig (config_name) VALUES (?)";
+                insertStmt = conn.prepareStatement(insertPizzeriaSql, Statement.RETURN_GENERATED_KEYS);
+                insertStmt.setString(1, pizzeriaName);
+                insertStmt.executeUpdate();
+
+                // Get the newly created pizzeria ID
+                ResultSet generatedKeys = insertStmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    pizzeriaId = generatedKeys.getInt(1);
+
+                    // Handle missing base price
+                    Map<String, Object> params = Map.of("pizzeriaName", pizzeriaName);
+                    exception = factory.createException(ExceptionType.BASE_PRICE_MISSING, params);
+                    exception.fix();
+                } else {
+                    throw new SQLException("Failed to create pizzeria, no ID obtained.");
+                }
+
+                generatedKeys.close();
+                insertStmt.close();
+            }
+
+            // Add option set
+            String insertOptionSet = "INSERT INTO option_sets (pizzeria_id, name) VALUES (?, ?) " +
+                    "ON DUPLICATE KEY UPDATE name = name";  // No-op update if exists
+            optionSetStmt = conn.prepareStatement(insertOptionSet);
+            optionSetStmt.setInt(1, pizzeriaId);
+            optionSetStmt.setString(2, optionSetName);
+            optionSetStmt.executeUpdate();
+        }
+        catch (SQLException e) {
+            // Handle database exceptions
+            throw new RuntimeException("Database error while adding option set: " + e.getMessage(), e);
+        }
+        finally {
+            // Close resources except connection
+            try {
+                if (rs != null)
+                    rs.close();
+                if (insertStmt != null)
+                    insertStmt.close();
+                if (optionSetStmt != null)
+                    optionSetStmt.close();
+            }
+            catch (SQLException e) {
+                System.err.println("Error closing database resources: " + e.getMessage());
+            }
+        }
     }
 
     @Override
@@ -108,7 +187,7 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
 
     @Override
     public boolean updatePizzeria(PizzaConfig config) {
-        String sql = "UPDATE pizzerias SET base_price = ? WHERE config_name = ?";
+        String sql = "UPDATE pizzaconfig SET base_price = ? WHERE config_name = ?";
         try (Connection conn = CONNECTION.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setDouble(1, config.getBasePrice());
@@ -124,7 +203,7 @@ public class MySQLPizzaConfigDAO implements PizzaConfigDAO
 
     @Override
     public boolean deletePizzeria(String pizzeriaName) {
-        String sql = "DELETE FROM pizzerias WHERE config_name = ?";
+        String sql = "DELETE FROM pizzaconfig WHERE config_name = ?";
         try (Connection conn = CONNECTION.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, pizzeriaName);
